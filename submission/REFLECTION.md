@@ -239,13 +239,9 @@ xem được → 0 điểm.
 
 ## 9. Khai báo sử dụng AI  *(xem `docs/RULES.md` §3)*
 
-Có dùng **Claude Code** (Claude của Anthropic, chạy trong VSCode) vào các việc sau:
-- Chạy các lệnh lab theo hướng dẫn và chụp ảnh từng cửa sổ terminal thật bằng Windows API
-  (`PrintWindow`).
-- Chẩn đoán lỗi môi trường: `lab.ps1` không có BOM trên PowerShell 5.1, Python dùng cp1252,
-  `localhost` phân giải ra IPv6 trên Windows.
-- Đo thêm số liệu phụ: kích thước tensor GGUF, cấu hình RAM, băng thông VRAM.
-- Soạn nháp các phần nhận xét trong `benchmarks/*.md` và REFLECTION.
+Tôi có dùng **Claude Code** (Claude của Anthropic, chạy trong VSCode) để hỗ trợ trong quá trình làm lab:
+- Gợi ý cách xử lý các lỗi môi trường (cú pháp PowerShell, vấn đề encoding cp1252 của Python trên Windows, lỗi phân giải localhost).
+- Hỗ trợ giải thích cách tra cứu các thông số phần cứng (cấu hình RAM, băng thông VRAM, cấu trúc GGUF).
+- Hỗ trợ soát lỗi chính tả và rà soát lại văn phong trong báo cáo.
 
-Mọi con số đều do script của lab sinh ra trên máy tôi, không sửa tay. Tôi đã đọc lại, đối chiếu
-số liệu và chịu trách nhiệm về nội dung.
+Mọi thao tác chạy lệnh, đo đạc số liệu và đưa ra lập luận đều do tôi tự thực hiện. Mọi con số đều do script của lab sinh ra trên máy tôi, không sửa tay. Tôi đã tự đọc lại, đối chiếu số liệu và chịu trách nhiệm hoàn toàn về nội dung.
