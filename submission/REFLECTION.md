@@ -173,19 +173,34 @@ nhưng chỉ decode nhanh hơn 1.29x (khoảng 23 GB/s), vì kernel 2-bit tốn 
 > Bỏ trống nếu không làm. Xem `docs/bonus/README.md`. Đừng làm hết — **một** finding sâu
 > ăn điểm hơn năm bảng nông.
 
-**Đã làm:** _<B1 build-compare / B2 sweep nào / B4 challenge nào / B5 lựa chọn nào>_
+**Đã làm:**
+- **B2:** `.\lab.ps1 sweep-gpu`, sweep GPU offload `-ngl` 0 → 99 trên GTX 1650, dùng bản
+  prebuilt `llama-b10488-bin-win-cuda-12.4-x64.zip`. Report ở
+  `benchmarks/bonus-gpu-offload-sweep.md`, ảnh `09-bonus.png`.
+- **B3:** before/after ngay dưới đây.
 
-**Numbers:**
+**Numbers:** (tg128, UD-Q4_K_XL, `-t 8`)
 
 ```
-before:  <số>
-after:   <số>
-speedup: <X.Y>×
+before:  16.0 tok/s  (-ngl 0, CPU-only)
+after:   68.7 tok/s  (-ngl 99, toàn bộ weights trên GTX 1650)
+speedup: 4.30×
 ```
 
 **Điều này nói lên gì mà deck chưa nói:**
 
-_(để trống nếu bạn không làm phần này)_
+1. **Speedup gần bằng tỉ lệ băng thông bộ nhớ đo được** (khoảng 113 so với 25 GB/s, tức
+   4.6x). Decode trên GPU cũng bị chặn bởi memory bandwidth. GTX 1650 là card yếu về compute
+   nhưng có GDDR6 192 GB/s, gấp 3.75 lần trần DDR4 dual-channel.
+2. **Partial offload là bài toán Amdahl.** Ở `-ngl 8` đã có 37% số byte trên GPU mà chỉ được
+   1.11x, vì phần còn lại trên CPU vẫn quyết định thời gian mỗi token. Mô hình "thời gian = byte
+   CPU ÷ 25 GB/s + byte GPU ÷ 113 GB/s" khớp đo thực trong khoảng ±7% từ `-ngl 24` trở lên. Ở
+   `-ngl` thấp, chia graph giữa hai thiết bị còn tốn thêm chi phí.
+3. **`-ngl` đếm cả output layer và offload nó trước.** Model 35 layer cần `-ngl 36` (hoặc 99)
+   mới là full offload. `-ngl 35` vẫn để layer 0 trên CPU và mất 13% tốc độ (60.8 so với
+   68.8 tok/s). Tôi đã đoán ngược lại cho tới khi đọc log nạp model.
+4. **File 3 GB chạy được trên card 4 GB** vì bảng per-layer embedding 1.6 GB nằm lại RAM
+   (mỗi token chỉ tra 1 dòng). VRAM thực dùng chỉ khoảng 1.6 GB.
 
 ---
 
